@@ -1,7 +1,7 @@
 package ra.edu.controller;
 
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,9 +17,9 @@ import ra.edu.service.EnrollmentService;
 
 @Controller
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class EnrollmentManagementController {
-    @Autowired
-    private EnrollmentService enrollmentService;
+    private final EnrollmentService enrollmentService;
 
     @GetMapping("/enrollments")
     public String enrollmentManagement(
@@ -37,14 +37,8 @@ public class EnrollmentManagementController {
             return "redirect:/users/login";
         }
 
-        Page<Enrollment> enrollments;
-//        if (searchValue == null || searchValue.isBlank()) {
-//            enrollments = enrollmentService.getAllEnrollments(page, size, EnrollmentStatus.fromString(status));
-//        } else {
-            enrollments = enrollmentService.getEnrollmentsByCourseName(page, size, searchValue, EnrollmentStatus.fromString(status));
-//        }
-
-
+        Page<Enrollment> enrollments
+                = enrollmentService.getEnrollmentsByCourseName(page, size, searchValue, EnrollmentStatus.fromString(status));
         model.addAttribute("enrollments", enrollments);
         model.addAttribute("searchValue", searchValue);
         model.addAttribute("status", status);

@@ -1,10 +1,9 @@
 package ra.edu.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ra.edu.model.dto.CourseStatistics;
 import ra.edu.model.dto.StudentCountPerCourse;
@@ -14,16 +13,12 @@ import ra.edu.repository.EnrollmentRepository;
 import ra.edu.repository.UserRepository;
 import ra.edu.service.StatisticService;
 
-import java.util.List;
-
 @Service
+@RequiredArgsConstructor
 public class StatisticServiceImpl implements StatisticService {
-    @Autowired
-    private EnrollmentRepository enrollmentRepository;
-    @Autowired
-    private CourseRepository courseRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final EnrollmentRepository enrollmentRepository;
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Long countAllCourses() {

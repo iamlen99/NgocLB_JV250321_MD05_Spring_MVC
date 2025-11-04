@@ -13,15 +13,11 @@ import ra.edu.model.entity.EnrollmentStatus;
 @Repository
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
 
-    Page<Enrollment> findByUserId(Long userId, Pageable pageable);
-
     Page<Enrollment> findByUserIdAndCourseNameContaining(Long userId, String courName, Pageable pageable);
 
     Page<Enrollment> findAllByCourseNameContaining(String courseName, Pageable pageable);
 
     Enrollment findByCourseIdAndUser_Id(Long courseId, Long userId);
-
-    Page<Enrollment> findAllByStatus(EnrollmentStatus status, Pageable pageable);
 
     Page<Enrollment> findAllByCourseNameContainingAndStatus(String courseName, EnrollmentStatus status, Pageable pageable);
 
@@ -60,8 +56,6 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
                     "order by count (e.user.id) desc "
     )
     Page<StudentCountPerCourse> getTop5CoursesMostEnrolled(Pageable pageable);
-
-    Page<Enrollment> findByUserIdAndStatus(Long userId, EnrollmentStatus status, Pageable pageable);
 
     Page<Enrollment> findByUserIdAndCourseNameContainingAndStatus(Long userId, String courseName, EnrollmentStatus status, Pageable pageable);
 }

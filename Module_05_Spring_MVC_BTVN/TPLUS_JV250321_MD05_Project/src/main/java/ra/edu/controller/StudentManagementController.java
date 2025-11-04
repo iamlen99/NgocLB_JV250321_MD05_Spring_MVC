@@ -1,8 +1,7 @@
 package ra.edu.controller;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,21 +9,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ra.edu.model.entity.User;
 import ra.edu.service.StudentService;
-import ra.edu.service.UserService;
-
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class StudentManagementController {
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
 
     @GetMapping("/students")
     public String showStudents(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "8") Integer size,
-            @RequestParam(name = "searchValue", required = false) String searchValue,
+            @RequestParam(name = "searchValue", defaultValue = "") String searchValue,
             @RequestParam(name = "sortBy", required = false) String sortBy,
             Model model,
             HttpSession session,
@@ -36,12 +32,7 @@ public class StudentManagementController {
             return "redirect:/users/login";
         }
 
-        Page<User> students;
-        if (searchValue != null && !searchValue.isBlank()) {
-            students = studentService.getAllStudentsByName(page - 1, size, searchValue, sortBy);
-        } else {
-            students = studentService.getAllStudents(page - 1, size, sortBy);
-        }
+        Page<User> students = studentService.getAllStudentsByName(page - 1, size, searchValue, sortBy);
         model.addAttribute("students", students);
         model.addAttribute("searchValue", searchValue);
         model.addAttribute("sortBy", sortBy);

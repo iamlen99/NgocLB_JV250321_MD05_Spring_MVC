@@ -1,6 +1,6 @@
 package ra.edu.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,13 +10,12 @@ import ra.edu.model.entity.Course;
 import ra.edu.repository.CourseRepository;
 import ra.edu.service.CourseService;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
-    @Autowired
-    private CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
 
     private Pageable buildPageable(Integer page, Integer size, String sortBy) {
         if (sortBy == null || sortBy.isBlank()) {
@@ -35,17 +34,6 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
-    }
-
-    @Override
-    public Page<Course> getAllCourses(Integer page, Integer size, String sortBy) {
-        Pageable pageable = buildPageable(page, size, sortBy);
-        return courseRepository.findAll(pageable);
-    }
-
-    @Override
     public Page<Course> getAllCoursesByName(Integer page, Integer size, String courseName, String sortBy) {
         Pageable pageable = buildPageable(page, size, sortBy);
         return courseRepository.findAllByNameContaining(courseName, pageable);
@@ -57,22 +45,15 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public boolean isExistName(String courseName) {
-        return courseRepository.existsByName(courseName);
-    }
-
-    @Override
     public Optional<Course> findCourseById(Long id) {
         return courseRepository.findById(id);
     }
 
     @Override
-    public boolean deleteCourseById(Long id) {
+    public void deleteCourseById(Long id) {
         if (courseRepository.existsById(id)) {
             courseRepository.deleteById(id);
-            return true;
         }
-        return false;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ra.edu.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -13,9 +14,9 @@ import ra.edu.service.StatisticService;
 
 @Controller
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class StatisticController {
-    @Autowired
-    private StatisticService statisticService;
+    private final StatisticService statisticService;
 
 
     @GetMapping("/dashboard")

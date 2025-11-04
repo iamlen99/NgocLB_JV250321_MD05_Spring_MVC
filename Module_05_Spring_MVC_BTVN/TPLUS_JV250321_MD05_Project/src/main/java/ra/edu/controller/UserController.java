@@ -2,7 +2,7 @@ package ra.edu.controller;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,9 +21,9 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping(value = {"/","/users"})
+@RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
@@ -103,6 +103,6 @@ public class UserController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "index";
+        return "auth/login";
     }
 }

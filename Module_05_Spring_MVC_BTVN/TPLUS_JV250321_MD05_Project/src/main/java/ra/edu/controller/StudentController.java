@@ -2,17 +2,15 @@ package ra.edu.controller;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ra.edu.model.dto.ChangePasswordDTO;
-import ra.edu.model.dto.CourseDTO;
 import ra.edu.model.dto.UserUpdate;
 import ra.edu.model.entity.Course;
 import ra.edu.model.entity.Enrollment;
@@ -22,24 +20,21 @@ import ra.edu.service.CourseService;
 import ra.edu.service.EnrollmentService;
 import ra.edu.service.UserService;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/student")
+@RequiredArgsConstructor
 public class StudentController {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private CourseService courseService;
-    @Autowired
-    private EnrollmentService enrollmentService;
+    private final UserService userService;
+    private final CourseService courseService;
+    private final EnrollmentService enrollmentService;
 
     @GetMapping("/courses")
     public String showCourseList(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "5") Integer size,
-            @RequestParam(value = "searchValue", required = false) String searchValue,
+            @RequestParam(value = "searchValue", defaultValue = "") String searchValue,
             Model model,
             RedirectAttributes redirectAttributes,
             HttpSession session
@@ -50,12 +45,7 @@ public class StudentController {
             return "redirect:/users/login";
         }
 
-        Page<Course> courses;
-        if (searchValue == null || searchValue.isBlank()) {
-            courses = courseService.getAllCourses(page, size, null);
-        } else {
-            courses = courseService.getAllCoursesByName(page, size, searchValue, null);
-        }
+        Page<Course> courses = courseService.getAllCoursesByName(page, size, searchValue, null);
         model.addAttribute("courses", courses);
         model.addAttribute("searchValue", searchValue);
         model.addAttribute("page", page);
@@ -106,7 +96,7 @@ public class StudentController {
     public String showEnrollmentHistoryList(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "5") Integer size,
-            @RequestParam(value = "searchValue", required = false) String searchValue,
+            @RequestParam(value = "searchValue", defaultValue = "") String searchValue,
             @RequestParam(value = "status", required = false) String status,
             Model model,
             RedirectAttributes redirectAttributes,
@@ -118,12 +108,7 @@ public class StudentController {
             return "redirect:/users/login";
         }
 
-        Page<Enrollment> enrollments;
-        if (searchValue == null || searchValue.isBlank()) {
-            enrollments = enrollmentService.getEnrollmentByStudentIdAndStatus(loggedUser.getId(), page, size, EnrollmentStatus.fromString(status));
-        } else {
-            enrollments = enrollmentService.getEnrollmentByStudentIdAndSearchValueAndStatus(loggedUser.getId(), page, size, searchValue, EnrollmentStatus.fromString(status));
-        }
+        Page<Enrollment> enrollments = enrollmentService.getEnrollmentByStudentIdAndSearchValueAndStatus(loggedUser.getId(), page, size, searchValue, EnrollmentStatus.fromString(status));
         model.addAttribute("enrollments", enrollments);
         model.addAttribute("searchValue", searchValue);
         model.addAttribute("status", status);
@@ -176,7 +161,7 @@ public class StudentController {
         if (!model.containsAttribute("studentUpdate")) {
             model.addAttribute("studentUpdate", studentUpdate);
         }
-        if(!model.containsAttribute("changePasswordDTO")) {
+        if (!model.containsAttribute("changePasswordDTO")) {
             model.addAttribute("changePasswordDTO", new ChangePasswordDTO());
         }
         return "student/edit-student";

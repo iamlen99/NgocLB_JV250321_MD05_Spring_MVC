@@ -1,5 +1,6 @@
 package ra.edu.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,9 +18,9 @@ import ra.edu.service.StudentService;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     private Pageable buildPageable(Integer page, Integer size, String sortBy) {
         if (sortBy == null || sortBy.isBlank()) {
@@ -35,12 +36,6 @@ public class StudentServiceImpl implements StudentService {
         };
 
         return PageRequest.of(page, size, sortOrder);
-    }
-
-    @Override
-    public Page<User> getAllStudents(Integer page, Integer size, String sortBy) {
-        Pageable pageable = buildPageable(page, size, sortBy);
-        return userRepository.findAllByRole(Role.STUDENT, pageable);
     }
 
     @Override

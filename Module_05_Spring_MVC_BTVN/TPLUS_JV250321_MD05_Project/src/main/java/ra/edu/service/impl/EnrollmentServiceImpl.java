@@ -1,6 +1,6 @@
 package ra.edu.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,9 +11,9 @@ import ra.edu.repository.EnrollmentRepository;
 import ra.edu.service.EnrollmentService;
 
 @Service
+@RequiredArgsConstructor
 public class EnrollmentServiceImpl implements EnrollmentService {
-    @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     private Enrollment getWaitingEnrollment(Long enrollmentId) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
@@ -36,31 +36,13 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
-    public Page<Enrollment> getEnrollmentByStudentIdAndStatus(Long studentId, Integer page, Integer size, EnrollmentStatus status) {
-        Pageable pageable = PageRequest.of(page, size);
-        if (status == null) {
-            return enrollmentRepository.findByUserId(studentId, pageable);
-        }
-        return enrollmentRepository.findByUserIdAndStatus(studentId, status, pageable);
-    }
-
-    @Override
     public Page<Enrollment> getEnrollmentByStudentIdAndSearchValueAndStatus(Long studentId, Integer page, Integer size,
                                                                             String searchValue, EnrollmentStatus status) {
         Pageable pageable = PageRequest.of(page, size);
-        if(status == null) {
+        if (status == null) {
             return enrollmentRepository.findByUserIdAndCourseNameContaining(studentId, searchValue, pageable);
         }
         return enrollmentRepository.findByUserIdAndCourseNameContainingAndStatus(studentId, searchValue, status, pageable);
-    }
-
-    @Override
-    public Page<Enrollment> getAllEnrollments(Integer page, Integer size, EnrollmentStatus status) {
-        Pageable pageable = PageRequest.of(page, size);
-        if (status == null) {
-            return enrollmentRepository.findAll(pageable);
-        }
-        return enrollmentRepository.findAllByStatus(status, pageable);
     }
 
     @Override
@@ -90,14 +72,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     public void cancelEnrollment(Long enrollmentId) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new IllegalStateException("Không tìm thấy bản đăng ký có id = " + enrollmentId));
-        switch (enrollment.getStatus()) {
-            case CONFIRMED -> throw new IllegalStateException("Bạn đã được duyệt đăng ký rồi, không thể hủy");
-            case CANCELLED -> throw new IllegalStateException("Bạn đã hủy bản đăng ký này rồi");
-            case DENIED -> throw new IllegalStateException("Bạn đã bị từ chối đăng ký, không thể hủy");
-            default -> {
-                enrollment.setStatus(EnrollmentStatus.CANCELLED);
-                enrollmentRepository.save(enrollment);
-            }
-        }
+        enrollment.setStatus(EnrollmentStatus.CANCELLED);
+        enrollmentRepository.save(enrollment);
     }
 }

@@ -2,6 +2,7 @@ package ra.edu.controller;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -21,17 +22,16 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class CourseManagementController {
-    @Autowired
-    private CourseService courseService;
-    @Autowired
-    private CloudinaryService cloudinaryService;
+    private final CourseService courseService;
+    private final CloudinaryService cloudinaryService;
 
     @GetMapping("/courses")
     public String showCourses(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "size", defaultValue = "5") Integer size,
-            @RequestParam(name = "searchValue", required = false) String searchValue,
+            @RequestParam(name = "searchValue", defaultValue = "") String searchValue,
             @RequestParam(name = "sortBy", required = false) String sortBy,
             Model model,
             HttpSession session,
@@ -43,12 +43,7 @@ public class CourseManagementController {
             return "redirect:/users/login";
         }
 
-        Page<Course> courses;
-        if (searchValue != null && !searchValue.isBlank()) {
-            courses = courseService.getAllCoursesByName(page, size, searchValue, sortBy);
-        } else {
-            courses = courseService.getAllCourses(page, size, sortBy);
-        }
+        Page<Course> courses = courseService.getAllCoursesByName(page, size, searchValue, sortBy);
         model.addAttribute("courses", courses);
         model.addAttribute("searchValue", searchValue);
         model.addAttribute("sortBy", sortBy);

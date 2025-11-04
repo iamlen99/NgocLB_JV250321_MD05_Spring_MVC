@@ -81,8 +81,8 @@
                 </td>
                 <td th:text="${#temporals.format(enrollment.createAt, 'dd/MM/yyyy')}"></td>
                 <td>
-                        <span th:if="${#strings.equalsIgnoreCase(enrollment.status, 'WAITING')}"
-                              class="waiting-status" th:text="${enrollment.status}"></span>
+                    <span th:if="${#strings.equalsIgnoreCase(enrollment.status, 'WAITING')}"
+                          class="waiting-status" th:text="${enrollment.status}"></span>
                     <span th:if="${#strings.equalsIgnoreCase(enrollment.status, 'CONFIRMED')}"
                           class="confirm-status" th:text="${enrollment.status}"></span>
                     <span th:if="${#strings.equalsIgnoreCase(enrollment.status, 'DENIED')}"
@@ -91,10 +91,11 @@
                           class="cancel-status" th:text="${enrollment.status}"></span>
                 </td>
                 <td>
-                    <a th:href="@{/student/cancel-enrollment/{id}(id=${enrollment.id})}"
-                       class="action cancel-action">CANCEL</a>
+                    <th:block th:if="${enrollment.status.name().equals('WAITING')}">
+                        <a th:href="@{/student/cancel-enrollment/{id}(id=${enrollment.id})}"
+                           class="action cancel-action">CANCEL</a>
+                    </th:block>
                 </td>
-
             </tr>
             <tr th:if="${enrollments.content.size() == 0}">
                 <td colspan="6" style="padding:14px;text-align:center;color:#666;">Không tìm thấy lịch sử đăng ký khóa
