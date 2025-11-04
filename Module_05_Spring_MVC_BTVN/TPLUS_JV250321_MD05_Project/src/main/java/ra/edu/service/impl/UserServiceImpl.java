@@ -2,7 +2,6 @@ package ra.edu.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ra.edu.model.entity.User;
 import ra.edu.repository.UserRepository;
