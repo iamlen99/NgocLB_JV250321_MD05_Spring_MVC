@@ -94,6 +94,13 @@ public class UserController {
             if (Role.ADMIN.equals(loggedUser.getRole())) {
                 return "redirect:/admin/dashboard";
             }
+
+            if(Boolean.FALSE.equals(loggedUser.getStatus())){
+                model.addAttribute("errMsg", "Tài khoản của bạn đã bị khóa, " +
+                        "vui lòng liên hệ admin để mở lại!");
+                return "auth/login";
+            }
+
             return "redirect:/student/courses";
         }
         model.addAttribute("errMsg", "Tài khoản hoặc mật khẩu không chính xác");
