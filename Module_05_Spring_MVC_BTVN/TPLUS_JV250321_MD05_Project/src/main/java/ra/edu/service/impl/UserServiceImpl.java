@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
         }
 
         boolean passwordMatch = BCrypt.checkpw(password, user.getPassword());
-        if(passwordMatch && Boolean.TRUE.equals(user.getStatus())){
+        if(passwordMatch){
             return Optional.of(user);
         }
         return Optional.empty();
