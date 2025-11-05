@@ -100,7 +100,6 @@ public class UserController {
                         "vui lòng liên hệ admin để mở lại!");
                 return "auth/login";
             }
-
             return "redirect:/student/courses";
         }
         model.addAttribute("errMsg", "Tài khoản hoặc mật khẩu không chính xác");
